@@ -8,6 +8,12 @@
 + [8](#8)
 + [9](#9)
 + [10](#10)
++ [11](#11)
++ [12](#12)
++ [13](#13)
++ [14](#14)
++ [15](#15)
++ [16](#16)
 
 ## 1
 
@@ -102,4 +108,56 @@ https://sql-ex.ru/learn_exercises.php?LN=10
 
 ```sql
 SELECT DISTINCT model, price FROM printer WHERE price = (SELECT MAX(price) FROM printer)
+```
+
+## 11
+
+https://sql-ex.ru/learn_exercises.php?LN=11
+
+```sql
+SELECT AVG(speed) FROM pc
+```
+
+## 12
+
+https://sql-ex.ru/learn_exercises.php?LN=12
+
+```sql
+SELECT AVG(speed) FROM laptop WHERE price > '1000'
+```
+
+## 13
+
+https://sql-ex.ru/learn_exercises.php?LN=13
+
+```sql
+SELECT AVG(PC.speed) FROM PC
+JOIN product a ON PC.model = a.model WHERE maker = 'A'
+```
+
+## 14
+
+https://sql-ex.ru/learn_exercises.php?LN=14
+
+```sql
+SELECT s.class, s.name, c.country FROM classes c
+JOIN ships s ON c.class = s.class WHERE numguns >= '10'
+```
+
+## 15
+
+https://sql-ex.ru/learn_exercises.php?LN=15
+
+```sql
+SELECT hd FROM PC
+GROUP BY hd
+HAVING count(model) >=2
+```
+
+## 16
+
+https://sql-ex.ru/learn_exercises.php?LN=16
+
+```sql
+
 ```
