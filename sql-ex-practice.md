@@ -86,3 +86,20 @@ SELECT DISTINCT maker FROM product WHERE type = 'PC'
 EXCEPT
 SELECT DISTINCT maker FROM product WHERE type = 'laptop'
 ```
+
+## 9
+
+https://sql-ex.ru/learn_exercises.php?LN=9
+
+```sql
+SELECT DISTINCT product.maker from product
+JOIN pc ON product.model = pc.model WHERE pc.speed >= '450'
+```
+
+## 10
+
+https://sql-ex.ru/learn_exercises.php?LN=10
+
+```sql
+SELECT DISTINCT model, price FROM printer WHERE price = (SELECT MAX(price) FROM printer)
+```
