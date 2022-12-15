@@ -1115,18 +1115,18 @@ https://sql-ex.ru/learn_exercises.php?LN=83
 SELECT name
 FROM Ships AS s JOIN Classes AS cl1 ON s.class = cl1.class
 WHERE
-CASE WHEN numGuns = 8 THEN 1 ELSE 0 END +
-CASE WHEN bore = 15 THEN 1 ELSE 0 END +
-CASE WHEN displacement = 32000 THEN 1 ELSE 0 END +
-CASE WHEN type = 'bb' THEN 1 ELSE 0 END +
-CASE WHEN launched = 1915 THEN 1 ELSE 0 END +
-CASE WHEN s.class = 'Kongo' THEN 1 ELSE 0 END +
-CASE WHEN country = 'USA' THEN 1 ELSE 0 END > = 4
+ CASE WHEN numGuns = 8 THEN 1 ELSE 0 END +
+ CASE WHEN bore = 15 THEN 1 ELSE 0 END +
+ CASE WHEN displacement = 32000 THEN 1 ELSE 0 END +
+ CASE WHEN type = 'bb' THEN 1 ELSE 0 END +
+ CASE WHEN launched = 1915 THEN 1 ELSE 0 END +
+ CASE WHEN s.class = 'Kongo' THEN 1 ELSE 0 END +
+ CASE WHEN country = 'USA' THEN 1 ELSE 0 END > = 4
 ```
 
-## 85
+## 84
 
-https://sql-ex.ru/learn_exercises.php?LN=85
+https://sql-ex.ru/learn_exercises.php?LN=84
 
 ```sql
 SELECT C.name, A.N_1_10, A.N_11_21, A.N_21_30
