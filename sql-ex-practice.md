@@ -1286,3 +1286,141 @@ from pass_in_trip pt left join trip t on pt.trip_no=t.trip_no
 group by c.name
 ```
 
+## 94
+
+https://sql-ex.ru/learn_exercises.php?LN=94
+
+```sql
+SELECT DATEADD(day, S.Num, D.date) AS Dt,
+       (SELECT COUNT(DISTINCT P.trip_no)
+        FROM Pass_in_trip P
+               JOIN Trip T
+                 ON P.trip_no = T.trip_no
+                    AND T.town_from = 'Rostov'
+                    AND P.date = DATEADD(day, S.Num, D.date)) AS Qty
+FROM (SELECT (3 * ( x - 1 ) + y - 1) AS Num
+        FROM (SELECT 1 AS x UNION ALL SELECT 2 UNION ALL SELECT 3) AS N1
+               CROSS JOIN (SELECT 1 AS y UNION ALL SELECT 2 UNION ALL SELECT 3) AS N2
+        WHERE (3 * ( x - 1 ) + y ) < 8) AS S,
+       (SELECT MIN(A.date) AS date
+        FROM (SELECT P.date,
+                       COUNT(DISTINCT P.trip_no) AS Qty,
+                       MAX(COUNT(DISTINCT P.trip_no)) OVER() AS M_Qty
+                FROM Pass_in_trip AS P
+                       JOIN Trip AS T
+                         ON P.trip_no = T.trip_no
+                            AND T.town_from = 'Rostov'
+                GROUP BY P.date) AS A
+        WHERE A.Qty = A.M_Qty) AS D
+```
+
+## 95
+
+https://sql-ex.ru/learn_exercises.php?LN=95
+
+```sql
+SELECT name,
+    COUNT(DISTINCT CONVERT(CHAR(24),date)+CONVERT(CHAR(4),Trip.trip_no)),
+    COUNT(DISTINCT plane),
+    COUNT(DISTINCT ID_psg),
+    COUNT(*)
+FROM Company,Pass_in_trip,Trip
+WHERE Company.ID_comp=Trip.ID_comp and Trip.trip_no=Pass_in_trip.trip_no
+GROUP BY Company.ID_comp,name
+```
+
+## 96
+
+https://sql-ex.ru/learn_exercises.php?LN=96
+
+```sql
+with r as (select v.v_name,
+       v.v_id,
+       count(case when v_color = 'R' then 1 end) over(partition by v_id) cnt_r,
+       count(case when v_color = 'B' then 1 end) over(partition by b_q_id) cnt_b
+  from utV v join utB b on v.v_id = b.b_v_id)
+select v_name
+  from r
+where cnt_r > 1
+  and cnt_b > 0
+group by v_name
+```
+
+## 97
+
+https://sql-ex.ru/learn_exercises.php?LN=97
+
+```sql
+select code, speed, ram, price, screen
+from laptop where exists (
+  select 1 x
+  from (
+    select v, rank()over(order by v) rn
+    from ( select cast(speed as float) sp, cast(ram as float) rm,
+                  cast(price as float) pr, cast(screen as float) sc
+    )l unpivot(v for c in (sp, rm, pr, sc))u
+  )l pivot(max(v) for rn in ([1],[2],[3],[4]))p
+  where [1]*2 <= [2] and [2]*2 <= [3] and [3]*2 <= [4]
+)
+```
+
+## 98
+
+https://sql-ex.ru/learn_exercises.php?LN=98
+
+```sql
+with CTE AS
+(select
+1 n, cast (0 as varchar(16)) bit_or,
+code, speed, ram FROM PC
+UNION ALL
+select n*2,
+cast (convert(bit,(speed|ram)&n) as varchar(1))+cast(bit_or as varchar(15))
+, code, speed, ram
+from CTE where n < 65536
+)
+select code, speed, ram from CTE
+where n = 65536
+and CHARINDEX('1111', bit_or )> 0
+```
+
+## 99
+
+https://sql-ex.ru/learn_exercises.php?LN=99
+
+```sql
+select point,
+       "date" income_date,
+       "date" + nvl(
+                  min(case when diff > cnt then cnt else null end),
+                  max(cnt)+1
+                ) incass_date
+from (select i.point,
+             i."date",
+             (trunc(o."date") - trunc(i."date")) diff, -- разница дней
+             -- количество запрещенных для инкассации дней после прихода и до текущего запрещенного дня
+             count(1) over (partition by i.point, i."date" order by o."date" rows between unbounded preceding and current row)-1 cnt
+      from income_o i
+               join (select point, "date", 1 disabled from outcome_o
+                     union
+                     select point, trunc("date"+7,'DAY'), 1 disabled from income_o) o
+                 on i.point = o.point
+      where o."date" > = i."date")
+group by point, "date"
+```
+
+## 100
+
+https://sql-ex.ru/learn_exercises.php?LN=100
+
+```sql
+Select distinct A.date , A.R, B.point, B.inc, C.point, C.out
+From (Select distinct date, ROW_Number() OVER(PARTITION BY date ORDER BY code asc) as R From Income
+Union Select distinct date, ROW_Number() OVER(PARTITION BY date ORDER BY code asc) From Outcome) A
+LEFT Join (Select date, point, inc
+                , ROW_Number() OVER(PARTITION BY date ORDER BY code asc) as RI FROM Income
+           ) B on B.date=A.date and B.RI=A.R
+LEFT Join (Select date, point, out
+                , ROW_Number() OVER(PARTITION BY date ORDER BY code asc) as RO FROM Outcome
+           ) C on C.date=A.date and C.RO=A.R
+```
