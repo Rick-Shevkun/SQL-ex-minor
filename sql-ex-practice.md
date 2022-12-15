@@ -1397,8 +1397,7 @@ select point,
                 ) incass_date
 from (select i.point,
              i."date",
-             (trunc(o."date") - trunc(i."date")) diff, -- разница дней
-             -- количество запрещенных для инкассации дней после прихода и до текущего запрещенного дня
+             (trunc(o."date") - trunc(i."date")) diff,
              count(1) over (partition by i.point, i."date" order by o."date" rows between unbounded preceding and current row)-1 cnt
       from income_o i
                join (select point, "date", 1 disabled from outcome_o
